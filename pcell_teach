@@ -1,0 +1,17 @@
+Libname="mylib" ;pcell库的位置
+Cellname="skill_test" ;pcell的名字
+
+pcDefinePCell( ;设置pcell
+
+	list( ddGetObj(Libname) Cellname "layout") 
+
+	(
+		(L	int 8)	; Pcell的变量，设置在这里的变量可以在layout中调整
+        (W  int 10)
+    )  
+
+	let( 
+		() ;程序主体，第一对括号不要删除
+        rect1=dbCreateRect(pcCellView list("M9" "drawing") list(0:0 W:L))												
+	)
+) 

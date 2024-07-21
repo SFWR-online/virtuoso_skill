@@ -1,0 +1,61 @@
+Libname="myelement"
+Cellname="ind_1loop_diff"
+
+pcDefinePCell(
+
+	list( ddGetObj(Libname) Cellname "layout") 
+
+	(	
+		(R	float 48)	; Pcell parameters
+		(W	float 10)
+		(COM_1 string "none")	
+		(COM_2 string "none")
+		(COM_3 string "none")
+	)  
+
+	let( 
+		() ;do not delete!
+        RN=R-W
+		L=R*2*(sqrt(2)-1)
+		LN=RN*2*(sqrt(2)-1)
+		Pout=W*2	
+		rodCreatePolygon(
+			?layer	list("M9" "drawing")
+			?pts		list(R+Pout:W/2 R+Pout:W/2+W R:W/2+W R:L/2 L/2:R -L/2:R -R:L/2 -R:-L/2 -L/2:-R L/2:-R R:-L/2 R:-W/2-W R+Pout:-W/2-W R+Pout:-W/2  
+						RN:-W/2 RN:-LN/2 LN/2:-RN -LN/2:-RN -RN:-LN/2 -RN:LN/2 -LN/2:RN LN/2:RN RN:LN/2 RN:W/2)
+		)
+		rodCreatePolygon(
+			?layer	list("M4" "drawing")
+			?pts		list(-RN:W/2 -R-Pout:W/2 -R-Pout:-W/2 -RN:-W/2)
+		)
+        via_1=dbCreateInst(pcCellView dbOpenCellViewByType("myelement" "via_rect" "layout") "via1" list(-R -W/2) "R0")
+		via_1~>M_BOT=4		
+		via_1~>M_TOP=9
+		via_1~>VIA_W=W		
+		via_1~>VIA_L=W
+    )	
+	if(COM_1!="none"
+	then
+		fig=dbCreateRect(pcCellView list("M9" "drawing") list( R+Pout:W/2 R+Pout+0.2*W:W/2+W))
+		net=dbCreateNet(pcCellView COM_1)
+		trm=dbCreateTerm(net COM_1 "inputOutput")
+		pin=dbCreatePin(net fig COM_1)
+		dbCreateLabel(pcCellView list("M9" "pin") R+Pout+0.1*W:W COM_1 "centerLeft" "R0" "roman" 2)
+	)
+	if(COM_2!="none"
+	then
+		fig=dbCreateRect(pcCellView list("M9" "drawing") list( R+Pout:-W/2-W R+Pout+0.2*W:-W/2))
+		net=dbCreateNet(pcCellView COM_2)
+		trm=dbCreateTerm(net COM_2 "inputOutput")
+		pin=dbCreatePin(net fig COM_2)
+		dbCreateLabel(pcCellView list("M9" "pin") R+Pout+0.1*W:-W COM_2 "centerLeft" "R0" "roman" 2)
+	)
+	if(COM_3!="none"
+	then
+		fig=dbCreateRect(pcCellView list("M4" "drawing") list( -R-Pout-0.2*W:-W/2 -R-Pout:W/2))
+		net=dbCreateNet(pcCellView COM_3)
+		trm=dbCreateTerm(net COM_3 "inputOutput")
+		pin=dbCreatePin(net fig COM_3)
+		dbCreateLabel(pcCellView list("M4" "pin") -R-Pout-0.1*W:0 COM_3 "centerLeft" "R0" "roman" 2)
+	)
+)

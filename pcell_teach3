@@ -1,0 +1,54 @@
+Libname="myelement"
+Cellname="via_rect"
+pcDefinePCell(
+	list( ddGetObj(Libname) Cellname "layout") 
+	(	
+		(M_BOT	int 8)	; Pcell parameters
+		(M_TOP	int 9)
+		(VIA_W float 10)
+		(VIA_L float 10)
+	)  
+	let( 
+		() ;do not delete!
+		POS_X=0 
+		POS_Y=0
+		if( M_TOP <= 6
+			then TOP_Row=int((VIA_W-0.1)/0.48+1) TOP_Column=int((VIA_L-0.1)/0.48+1)	; width of the top metal.
+			else TOP_Row=int((VIA_W-0.36)/0.90+1) TOP_Column=int((VIA_L-0.36)/0.90+1)
+		)
+		for(i M_BOT M_TOP	
+			(case i ; set metal layer, VIA layer
+				(1 layer=list("M1" "drawing") VIA_layer="VIA1" viaDelta=0.56 viayDelta=0.34 viaWid=0.1)
+				(2 layer=list("M2" "drawing") VIA_layer="VIA2" viaDelta=0.56 viayDelta=0.34 viaWid=0.1)
+				(3 layer=list("M3" "drawing") VIA_layer="VIA3" viaDelta=0.56 viayDelta=0.34 viaWid=0.1)	
+				(4 layer=list("M4" "drawing") VIA_layer="VIA4" viaDelta=0.56 viayDelta=0.34 viaWid=0.1)
+				(5 layer=list("M5" "drawing") VIA_layer="VIA5" viaDelta=0.56 viayDelta=0.34 viaWid=0.1)
+				(6 layer=list("M6" "drawing") VIA_layer="VIA6" viaDelta=0.56 viayDelta=0.34 viaWid=0.1)
+				(7 layer=list("M7" "drawing") VIA_layer="VIA7" viaDelta=0.56 viayDelta=0.34 viaWid=0.36)
+				(8 layer=list("M8" "drawing") VIA_layer="VIA8" viaDelta=0.56 viayDelta=0.34 viaWid=0.36)
+			)
+			viaRowNum = int((VIA_W-viaWid)/(viaWid+viaDelta))+1
+			viaStartX = (VIA_W-(viaRowNum-1)*(viaWid+viaDelta)-viaWid)/2
+			viaColNum = int((VIA_L-viaWid)/(viaWid+viayDelta))+1
+			viaStartY = (VIA_L-(viaColNum-1)*(viaWid+viayDelta)-viaWid)/2					
+			rodCreateRect(
+				?layer		layer
+				?width		VIA_W
+				?length		VIA_L
+				?origin		list( POS_X POS_Y )
+			)	
+			if(i != M_TOP then 								
+				rodCreateRect(
+					?layer		VIA_layer
+					?width		viaWid
+					?length		viaWid
+					?origin		list(POS_X+viaStartX POS_Y+viaStartY )
+					?elementsX	viaRowNum
+					?elementsY	viaColNum
+					?spaceX		viaDelta
+					?spaceY		viayDelta
+				)
+			)
+		)
+	)
+)
